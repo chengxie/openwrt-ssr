@@ -7,9 +7,11 @@ ShadowsocksR-libev for OpenWrt
  本项目是 shadowsocksr-libev 在OpenWrt上的移植  
 
  从ywb94的 https://github.com/ywb94/openwrt-ssr 的仓库fork出修改而来
+
  感谢ywb94 https://github.com/ywb94
 
- luci界面部分大量参考使用了他在 https://github.com/shadowsocks/luci-app-shadowsocks 中的代码
+ luci界面部分大量参考使用了 https://github.com/shadowsocks/luci-app-shadowsocks 中的代码
+
  感谢aa65535 https://github.com/aa65535
  
 
@@ -33,7 +35,7 @@ dns防污染
  - 只支持IP路由模式，对现有OpenWRT系统改动较少；
  - 本地dns域名解析存在污染，由远端SSR服务器重新进行二次DNS解析；可和其他DNS处理软件一起使用；
  - 建议通过dnsmasq将gfwlist中的域名传递给dns-forwarder, 使用tcp的方式从代理隧道发送到ssr服务器上请求解析
- - forwarder如果没有安装dns-forwarder, 可以将dnsmasq.conf中的dnsmasq.d路径的配置去除，直接使用普通dns服务器
+ - 如果没有安装dns-forwarder, 可以将dnsmasq.conf中的dnsmasq.d路径的配置去除，直接使用普通dns服务器
 
 编译
 ---
