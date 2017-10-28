@@ -1,23 +1,13 @@
 -- Copyright (C) 2017 yushi studio <ywb94@qq.com> github.com/ywb94
 -- Licensed to the public under the GNU General Public License v3.
 
-local m, s, o,kcp_enable
+local m, s, o
 local shadowsocksr = "shadowsocksr"
 local uci = luci.model.uci.cursor()
 local ipkg = require("luci.model.ipkg")
 local fs = require "nixio.fs"
 local sys = require "luci.sys"
 local sid = arg[1]
-
-local function isKcptun(file)
-    if not fs.access(file, "rwx", "rx", "rx") then
-        fs.chmod(file, 755)
-    end
-
-    local str = sys.exec(file .. " -v | awk '{printf $1}'")
-    return (str:lower() == "kcptun")
-end
-
 
 local server_table = {}
 local arp_table = luci.sys.net.arptable() or {}
@@ -65,8 +55,8 @@ obfs = {
 	"tls1.2_ticket_auth",
 }
 
-m = Map(shadowsocksr, translate("Edit ShadowSocksR Server"))
-m.redirect = luci.dispatcher.build_url("admin/services/shadowsocksr/client")
+m = Map(shadowsocksr, translate("Servers Setting"))
+m.redirect = luci.dispatcher.build_url("admin/services/shadowsocksr/servers")
 if m.uci:get(shadowsocksr, sid) ~= "servers" then
 	luci.http.redirect(m.redirect) 
 	return
@@ -85,17 +75,12 @@ o.rmempty = false
 o = s:option(Flag, "switch_enable", translate("Auto Switch"))
 o.rmempty = false
 
-o = s:option(Value, "server", translate("Server Address"))
+o = s:option(Value, "server", translate("Server"))
 o.datatype = "host"
 o.rmempty = false
 
-o = s:option(Value, "server_port", translate("Server Port"))
+o = s:option(Value, "server_port", translate("Port"))
 o.datatype = "port"
-o.rmempty = false
-
-o = s:option(Value, "local_port", translate("Local Port"))
-o.datatype = "port"
-o.default = 1234
 o.rmempty = false
 
 o = s:option(Value, "timeout", translate("Connection Timeout"))
@@ -124,33 +109,5 @@ o = s:option(Value, "obfs_param", translate("Obfs param(optional)"))
 
 o = s:option(Flag, "fast_open", translate("TCP Fast Open"))
 o.rmempty = false
-
-kcp_enable = s:option(Flag, "kcp_enable", translate("KcpTun Enable"), translate("bin:/usr/bin/ssr-kcptun"))
-kcp_enable.rmempty = false
-
-
-o = s:option(Value, "kcp_port", translate("KcpTun Port"))
-o.datatype = "port"
-o.default = 4000
-function o.validate(self, value, section)
-		local kcp_file="/usr/bin/ssr-kcptun"
-		local enable = kcp_enable:formvalue(section) or kcp_enable.disabled
-		if enable == kcp_enable.enabled then
-    if not fs.access(kcp_file)  then
-        return nil, translate("Haven't a Kcptun executable file")
-    elseif  not isKcptun(kcp_file) then
-        return nil, translate("Not a Kcptun executable file")    
-    end
-    end
-
-    return value
-end
-
-o = s:option(Value, "kcp_password", translate("KcpTun Password"))
-o.password = true
-
-o = s:option(Value, "kcp_param", translate("KcpTun Param"))
-o.default = "--nocomp"
-
 
 return m
