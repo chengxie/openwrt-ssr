@@ -72,9 +72,6 @@ o = s:option(Value, "alias", translate("Alias(optional)"))
 o = s:option(Flag, "auth_enable", translate("Onetime Authentication"))
 o.rmempty = false
 
-o = s:option(Flag, "switch_enable", translate("Auto Switch"))
-o.rmempty = false
-
 o = s:option(Value, "server", translate("Server"))
 o.datatype = "host"
 o.rmempty = false

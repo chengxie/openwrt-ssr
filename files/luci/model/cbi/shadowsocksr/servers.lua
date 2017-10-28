@@ -54,10 +54,5 @@ function o.cfgvalue(...)
 	return Value.cfgvalue(...) or "?"
 end
 
-o = s:option(DummyValue, "switch_enable", translate("Auto Switch"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or "0"
-end
-
 return m
 

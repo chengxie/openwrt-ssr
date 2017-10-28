@@ -6,11 +6,6 @@ local shadowsocksr = "shadowsocksr"
 local uci = luci.model.uci.cursor()
 local servers = {}
 
-local font_green = [[<font color="green">]]
-local font_red = [[<font color="red">]]
-local font_off = [[</font>]]
-
-
 local function has_bin(name)
 	return luci.sys.call("command -v %s >/dev/null" %{name}) == 0
 end
@@ -107,21 +102,5 @@ if has_redir then
 	o.default = 1492
 	o.rmempty = false
 end
-
-o = s:option(Flag, "monitor_enable", translate("Enable Process Monitor"))
-o.rmempty = false
-
-o = s:option(Flag, "enable_switch", translate("Enable Auto Switch"))
-o.rmempty = false
-
-o = s:option(Value, "switch_time", translate("Switch check cycly(second)"))
-o.datatype = "uinteger"
-o:depends("enable_switch", "1")
-o.default = 600
-
-o = s:option(Value, "switch_timeout", translate("Check timout(second)"))
-o.datatype = "uinteger"
-o:depends("enable_switch", "1")
-o.default = 3
 
 return m

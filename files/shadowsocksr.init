@@ -11,10 +11,6 @@ STOP=15
 
 NAME=shadowsocksr
 EXTRA_COMMANDS=rules
-redir_tcp=0
-redir_udp=0
-switch_enable=0
-switch_server=$1
 
 uci_get_by_name() {
 	local ret=$(uci get $NAME.$1.$2 2>/dev/null)
@@ -155,51 +151,21 @@ ssr_redir() {
 	command -v ssr-redir >/dev/null 2>&1 || return 1
 	local main_server=$(uci_get_by_type general main_server)
 	local udp_relay_server=$(uci_get_by_type general udp_relay_server)
-	redir_tcp=1
 	if [ "$udp_relay_server" = "same" ]; then
 		start_redir $main_server -u
 	else
 		start_redir $main_server
 		if [ "$udp_relay_server" != "nil" ]; then
-			redir_udp=1
 			start_redir $udp_relay_server -U -udp
 		fi
 	fi
-
-
-	if [ "$(uci_get_by_type general enable_switch)" = "1" ] ;then
-		if [ "$(uci_get_by_name $main_server switch_enable)" = "1" ] ;then
-			if [ -z "$switch_server" ] ;then
-				local switch_time=$(uci_get_by_type general switch_time)
-				local switch_timeout=$(uci_get_by_type general switch_timeout)
-				service_start /usr/bin/ssr-switch start $switch_time $switch_timeout
-				switch_enable=1
-			fi
-		fi
-	fi
-
 }
 
 start() {
 
-	if [ -z "$switch_server" ] ;then
-		MAIN_SERVER=$(uci_get_by_type general main_server)
-	else
-		MAIN_SERVER=$switch_server
-		switch_enable=1
-	fi
-
+	MAIN_SERVER=$(uci_get_by_type general main_server)
 	mkdir -p /var/run /var/etc /var/etc/$NAME
 	ssr_redir && rules
-
-	if [ $(uci_get_by_type general monitor_enable) = 1 ] ;then
-		let total_count=redir_tcp+redir_udp
-		if [ $total_count -gt 0 ]; then
-			#param:redir_tcp(0:no,1:yes) redir_udp(0:no,1:yes)
-			service_start /usr/bin/ssr-monitor $redir_tcp $redir_udp
-		fi
-	fi
-
 }
 
 boot() {
@@ -214,10 +180,6 @@ kill_all() {
 
 stop() {
 	/usr/bin/ssr-rules -f
-	kill_all ssr-monitor 
-	if [ -z "$switch_server" ] ;then
-		kill_all ssr-switch 
-	fi
 	kill_all ssr-redir 
 }
 
