@@ -63,6 +63,6 @@ dns防污染
    
 安装
 --- 
- - 本软件包依赖库：libopenssl、libpthread、ipset、ip、iptables-mod-tproxy、libpcre，GFW版本还需依赖dnsmasq-full、coreutils-base64，opkg会自动安装上述库文件
+ - 本软件包依赖库：libopenssl、libpthread、ipset、ip、iptables-mod-tproxy、libpcre，coreutils-base64，opkg会自动安装上述库文件
 
 

@@ -45,7 +45,7 @@ define Package/openwrt-ssr/Default
 endef
 
 
-Package/luci-app-shadowsocksR = $(call Package/openwrt-ssr/Default,openssl,(OpenSSL),+libopenssl +libpthread +ipset +ip +iptables-mod-tproxy +libpcre +zlib +coreutils +coreutils-base64)
+Package/luci-app-shadowsocksR = $(call Package/openwrt-ssr/Default,openssl,(OpenSSL),+libopenssl +libpthread +ipset +ip +iptables-mod-tproxy +libpcre +zlib +coreutils +coreutils-base64 +wget)
 
 define Package/openwrt-ssr/description
 	LuCI Support for $(1).
